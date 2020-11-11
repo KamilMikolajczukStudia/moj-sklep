@@ -14,8 +14,8 @@ class App {
 
   constructor(routes: Routes[]) {
     this.app = express()
-    this.port = process.env.PORT || 3000
-    this.env = process.env.NODE_ENV === 'production' ? true : false
+    this.port = process.env.PORT || 3333
+    this.env = process.env.NODE_ENV === 'production'
 
     this.initializeMiddlewares()
     this.initializeRoutes(routes)
@@ -38,7 +38,7 @@ class App {
       this.app.use(hpp())
       this.app.use(helmet())
       this.app.use(logger('combined'))
-      this.app.use(cors({ origin: 'your.domain.com', credentials: true }))
+      this.app.use(cors({ origin: 'localhost', credentials: true }))
     }
     else {
       this.app.use(logger('dev'))

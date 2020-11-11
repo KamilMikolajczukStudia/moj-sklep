@@ -25,13 +25,11 @@ class UserService {
       throw new HttpException(400, "You're not userData")
 
     const findUser: User = this.users.find(
-      (user) => user.email === userData.email
+      (user) => user.login === userData.login
     )
+
     if (findUser)
-      throw new HttpException(
-        409,
-        `You're email ${userData.email} already exists`
-      )
+      throw new HttpException(409, `Twój login '${userData.login}' jest zajęty`)
 
     const hashedPassword = await bcrypt.hash(userData.password, 10)
     const createUserData: User = {
@@ -44,13 +42,14 @@ class UserService {
   }
 
   public async updateUser(userId: number, userData: User): Promise<User[]> {
-    if (isEmptyObject(userData))
-      throw new HttpException(400, "You're not userData")
+    if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
 
     const findUser: User = this.users.find((user) => user.id === userId)
-    if (!findUser) throw new HttpException(409, "You're not user")
+
+    if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')
 
     const hashedPassword = await bcrypt.hash(userData.password, 10)
+
     const updateUserData: User[] = this.users.map((user: User) => {
       if (user.id === findUser.id)
         user = { id: userId, ...userData, password: hashedPassword }
@@ -62,11 +61,13 @@ class UserService {
 
   public async deleteUser(userId: number): Promise<User[]> {
     const findUser: User = this.users.find((user) => user.id === userId)
-    if (!findUser) throw new HttpException(409, "You're not user")
+
+    if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')
 
     const deleteUserData: User[] = this.users.filter(
       (user) => user.id !== findUser.id
     )
+
     return deleteUserData
   }
 }
