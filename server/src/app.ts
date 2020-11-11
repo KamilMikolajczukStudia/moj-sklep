@@ -38,11 +38,11 @@ class App {
       this.app.use(hpp())
       this.app.use(helmet())
       this.app.use(logger('combined'))
-      this.app.use(cors({ origin: 'localhost', credentials: true }))
+      this.app.use(cors({ origin: /localhost/, credentials: true }))
     }
     else {
       this.app.use(logger('dev'))
-      this.app.use(cors({ origin: true, credentials: true }))
+      this.app.use(cors({ origin: /localhost/, credentials: true }))
     }
 
     this.app.use(express.json())

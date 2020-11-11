@@ -1,14 +1,18 @@
 import React, { useCallback, useState } from 'react'
 
-import SignIn from './SignIn'
-import Register from './SignIn/Register'
+import { SignIn, Register } from './SigninAndRegister'
+import { User } from './User'
 
-enum AppStates { user, signIn, register }
+enum AppStates {
+  user,
+  signIn,
+  register
+}
 
 function ApplicationState() {
   const [state, setState] = useState(AppStates.signIn)
 
-  const loginUser = useCallback((token: string) => {
+  const loginUser = useCallback((user: User) => {
     setState(AppStates.user)
   }, [])
 
@@ -20,7 +24,7 @@ function ApplicationState() {
     setState(AppStates.register)
   }, [])
 
-  switch(state) {
+  switch (state) {
     case AppStates.signIn:
       return <SignIn register={register} />
     case AppStates.register:
@@ -31,10 +35,7 @@ function ApplicationState() {
 }
 
 function App() {
-  return (
-    <ApplicationState></ApplicationState>
-    
-  )
+  return <ApplicationState></ApplicationState>
 }
 
 export default App

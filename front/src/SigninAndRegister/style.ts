@@ -1,13 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles'
 
-import tlo from '../img/your-money.jpg'
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = (img: string) => makeStyles((theme) => ({
   root: {
     height: '100vh'
   },
   image: {
-    backgroundImage: `url(${tlo})`,
+    backgroundImage: `url(${img})`,
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light'

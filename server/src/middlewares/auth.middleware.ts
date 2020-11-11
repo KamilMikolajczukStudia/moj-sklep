@@ -29,13 +29,13 @@ function authMiddleware(
         req.user = findUser
         next()
       } else {
-        next(new HttpException(401, 'Wrong authentication token'))
+        next(new HttpException(401, 'Nieprawidłowy token logowania'))
       }
     } catch (error) {
-      next(new HttpException(401, 'Wrong authentication token'))
+      next(new HttpException(401, 'Nieprawidłowy token logowania'))
     }
   } else {
-    next(new HttpException(404, 'Authentication token missing'))
+    next(new HttpException(404, 'Użytkownik niezalogowany'))
   }
 }
 
