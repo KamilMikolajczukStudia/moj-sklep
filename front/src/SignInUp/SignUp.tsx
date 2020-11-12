@@ -16,7 +16,7 @@ import { http } from '../Http'
 import { User } from '../User'
 
 interface IRegisterProps {
-  signIn: () => void
+  signUp: () => void
 }
 
 interface ISuccessSignUp {
@@ -26,7 +26,7 @@ interface ISuccessSignUp {
 
 const useStyles = styles(tlo)
 
-export default function SignInSide({ signIn }: IRegisterProps) {
+export function SignUp({ signUp }: IRegisterProps) {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(
@@ -123,7 +123,7 @@ export default function SignInSide({ signIn }: IRegisterProps) {
               <Link
                 href='#'
                 variant='body2'
-                onClick={signIn}
+                onClick={signUp}
                 color='secondary'
                 align='center'
               >

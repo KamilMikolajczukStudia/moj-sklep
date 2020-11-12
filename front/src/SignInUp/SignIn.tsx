@@ -18,7 +18,7 @@ import { http } from '../Http'
 import { User } from '../User'
 
 interface ISignInProps {
-  register: () => void
+  signIn: () => void
 }
 
 interface ISuccessLogin {
@@ -29,7 +29,7 @@ interface ISuccessLogin {
 const useStyles = styles(tlo)
 
 
-export default function SignInSide({ register }: ISignInProps) {
+export function SignIn({ signIn }: ISignInProps) {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
@@ -143,7 +143,7 @@ export default function SignInSide({ register }: ISignInProps) {
             </Button>
 
             <Grid container>
-              <Link href='#' variant='body2' onClick={register} color="secondary" align='center'>
+              <Link href='#' variant='body2' onClick={signIn} color="secondary" align='center'>
                 Nie masz konta? Załóż je już w minutę i do tego <b>za darmo</b>!
               </Link>
             </Grid>
