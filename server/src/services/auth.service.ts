@@ -62,7 +62,7 @@ class AuthService {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
 
     const findUser: User = this.users.find(
-      (user) => user.password === userData.password
+      (user) => user.id === userData.id
     )
 
     if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')

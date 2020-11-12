@@ -21,12 +21,18 @@ class AuthRoute implements Route {
     )
     
     this.router.post(
-      `/login`,
+      `/signin`,
       validationMiddleware(CreateUserDto),
-      this.authController.logIn
+      this.authController.signIn
     )
 
-    this.router.post(`/logout`, authMiddleware, this.authController.logOut)
+    this.router.post(
+      `/auth`,
+      authMiddleware,
+      this.authController.auth
+    )
+
+    this.router.post(`/signout`, authMiddleware, this.authController.signOut)
   }
 }
 

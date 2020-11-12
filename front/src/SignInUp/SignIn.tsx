@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useCallback, useState, FormEvent } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useState,
+  FormEvent,
+  useContext
+} from 'react'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
@@ -15,10 +21,10 @@ import tlo from '../img/your-money.jpg'
 import Footer from './Footer'
 import styles from './style'
 import { http } from '../Http'
-import { User } from '../User'
+import { User, UserContext } from '../User'
 
 interface ISignInProps {
-  signIn: () => void
+  goToSignUp: () => void
 }
 
 interface ISuccessLogin {
@@ -28,8 +34,9 @@ interface ISuccessLogin {
 
 const useStyles = styles(tlo)
 
+export function SignIn({ goToSignUp }: ISignInProps) {
+  const { signIn } = useContext(UserContext)
 
-export function SignIn({ signIn }: ISignInProps) {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
@@ -64,13 +71,13 @@ export function SignIn({ signIn }: ISignInProps) {
       e.preventDefault()
 
       try {
-        const data = await http<ISuccessLogin>('/login', 'post', {
+        const { data: user } = await http<ISuccessLogin>('/signin', 'post', {
           login,
           password,
           rememberMe
         })
 
-        console.log(data)
+        signIn(user)
       } catch (e) {
         setErrorMessage(e.message)
       }
@@ -143,7 +150,13 @@ export function SignIn({ signIn }: ISignInProps) {
             </Button>
 
             <Grid container>
-              <Link href='#' variant='body2' onClick={signIn} color="secondary" align='center'>
+              <Link
+                href='#'
+                variant='body2'
+                onClick={goToSignUp}
+                color='secondary'
+                align='center'
+              >
                 Nie masz konta? Załóż je już w minutę i do tego <b>za darmo</b>!
               </Link>
             </Grid>

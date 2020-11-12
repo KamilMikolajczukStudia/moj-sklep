@@ -18,7 +18,7 @@ class AuthController {
     }
   }
 
-  public logIn = async (req: Request, res: Response, next: NextFunction) => {
+  public signIn = async (req: Request, res: Response, next: NextFunction) => {
     const userData: CreateUserDto = req.body
 
     try {
@@ -30,7 +30,7 @@ class AuthController {
     }
   }
 
-  public logOut = async (
+  public signOut = async (
     req: RequestWithUser,
     res: Response,
     next: NextFunction
@@ -44,6 +44,12 @@ class AuthController {
     } catch (error) {
       next(error)
     }
+  }
+
+  public auth = (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user: User = req.user
+
+    res.status(200).json({ data: user, message: 'auth' })
   }
 }
 

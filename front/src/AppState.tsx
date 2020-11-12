@@ -17,8 +17,8 @@ export default function AppState() {
 
   const [state, setState] = useState(States.load)
 
-  const signIn = useCallback(() => {}, [])
-  const signUp = useCallback(() => {}, [])
+  const goTSsignIn = useCallback(() => setState(States.signIn), [])
+  const goToSignUp = useCallback(() => setState(States.signUp), [])
 
   useEffect(() => {
     if (loaded) {
@@ -26,10 +26,20 @@ export default function AppState() {
     }
   }, [loaded])
 
-  return <>
-  {state === States.load && <Load/>}
-  {state === States.signIn && <SignIn signIn={signIn} />}
-  {state === States.signUp && <SignUp signUp={signUp} />}
-  {state === States.content && <Content />}
-  </>
+  useEffect(() => {
+    const newState = isLogin ? States.content : States.signIn
+
+    if (loaded && state !== newState) {
+      setState(newState)
+    }
+  }, [isLogin, loaded])
+
+  return (
+    <>
+      {state === States.load && <Load />}
+      {state === States.signIn && <SignIn goToSignUp={goToSignUp} />}
+      {state === States.signUp && <SignUp goTSsignIn={goTSsignIn} />}
+      {state === States.content && <Content />}
+    </>
+  )
 }

@@ -38,7 +38,7 @@ interface IUserContextProviderProps {
 
 interface ISuccessCheckLogin {
   data: User
-  message: 'user'
+  message: 'auth'
 }
 
 export function UserContextProvider({
@@ -61,7 +61,7 @@ export function UserContextProvider({
   useEffect(() => {
     async function CheckIsUserLogin() {
       try {
-        const { data: user } = await http<ISuccessCheckLogin>('/user', 'post')
+        const { data: user } = await http<ISuccessCheckLogin>('/auth', 'post')
 
         signIn(user)
       } catch (e) {
