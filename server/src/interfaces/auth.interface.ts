@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { User } from './users.interface'
+import { User } from './User'
 
 export interface DataStoredInToken {
   id: number
@@ -10,6 +10,8 @@ export interface TokenData {
   expiresIn: number
 }
 
-export interface RequestWithUser extends Request {
+export interface RequestWithUser<T = never> extends Request {
+  body: T
   user: User
+  cookies: { [key: string]: string }
 }

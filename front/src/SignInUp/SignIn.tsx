@@ -1,31 +1,22 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useState,
-  FormEvent,
-  useContext
-} from 'react'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
+import React, { ChangeEvent, FormEvent, useCallback, useContext, useState } from 'react'
+
+import Box              from '@material-ui/core/Box'
+import Grid             from '@material-ui/core/Grid'
+import Link             from '@material-ui/core/Link'
+import Paper            from '@material-ui/core/Paper'
+import Button           from '@material-ui/core/Button'
+import Checkbox         from '@material-ui/core/Checkbox'
+import TextField        from '@material-ui/core/TextField'
+import Typography       from '@material-ui/core/Typography'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import Link from '@material-ui/core/Link'
-import Paper from '@material-ui/core/Paper'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
 
-import logo from '../img/logo.svg'
-import tlo from '../img/your-money.jpg'
-import Footer from './Footer'
-import styles from './style'
-import { http } from '../Http'
+import styles                from './style'
+import { HttpContext }       from "../Http"
 import { User, UserContext } from '../User'
-
-interface ISignInProps {
-  goToSignUp: () => void
-}
+import Logo                  from '../Logo'
+import Footer                from './Footer'
+import tlo                   from '../img/your-money.jpg'
+import { StateContext }      from "../State";
 
 interface ISuccessLogin {
   data: User
@@ -34,14 +25,16 @@ interface ISuccessLogin {
 
 const useStyles = styles(tlo)
 
-export function SignIn({ goToSignUp }: ISignInProps) {
+export function SignIn() {
   const { signIn } = useContext(UserContext)
+  const { post } = useContext(HttpContext)
+  const { goToSignUp } = useContext(StateContext)
 
-  const [login, setLogin] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(
-    undefined as undefined | string
+  const [ login, setLogin ] = useState('')
+  const [ password, setPassword ] = useState('')
+  const [ rememberMe, setRememberMe ] = useState(false)
+  const [ errorMessage, setErrorMessage ] = useState(
+    undefined as undefined | string,
   )
   const classes = useStyles()
 
@@ -50,7 +43,7 @@ export function SignIn({ goToSignUp }: ISignInProps) {
       setErrorMessage(undefined)
       setLogin(value)
     },
-    []
+    [],
   )
 
   const handlerChangePassword = useCallback(
@@ -58,12 +51,12 @@ export function SignIn({ goToSignUp }: ISignInProps) {
       setErrorMessage(undefined)
       setPassword(value)
     },
-    []
+    [],
   )
 
   const handlerChangeRememberMe = useCallback(
     (_, checked: boolean) => setRememberMe(!checked),
-    []
+    [],
   )
 
   const handlerSubmit = useCallback(
@@ -71,46 +64,51 @@ export function SignIn({ goToSignUp }: ISignInProps) {
       e.preventDefault()
 
       try {
-        const { data: user } = await http<ISuccessLogin>('/signin', 'post', {
+        const result = await post<ISuccessLogin>('/signin', {
           login,
           password,
-          rememberMe
-        })
+          rememberMe,
+        }, false, true)
+
+        if (result === null) {
+          setErrorMessage('Błąd 2')
+          return
+        }
+
+        const { data: user } = result
 
         signIn(user)
       } catch (e) {
         setErrorMessage(e.message)
       }
     },
-    [login, password, rememberMe]
+    [ login, password, rememberMe, signIn ],
   )
 
   return (
-    <Grid container component='main' className={classes.root}>
-      <CssBaseline />
+    <Grid container component='main' className={ classes.root }>
+      <Grid item xs={ false } sm={ 4 } md={ 7 } className={ classes.image }/>
 
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <img src={logo} alt='' className={classes.logo} />
+      <Grid item xs={ 12 } sm={ 8 } md={ 5 } component={ Paper } elevation={ 6 } square>
+        <div className={ classes.paper }>
+          <Logo className={ classes.logo }/>
 
           <Typography component='h1' variant='h5'>
             Mój bank - Logowanie
           </Typography>
 
-          <form className={classes.form} noValidate onSubmit={handlerSubmit}>
+          <form className={ classes.form } noValidate onSubmit={ handlerSubmit }>
             <TextField
               required
               fullWidth
               autoFocus
-              value={login}
+              value={ login }
               label='Login'
               margin='normal'
               variant='outlined'
-              helperText={errorMessage}
-              onChange={handlerChangeLogin}
-              error={errorMessage !== undefined}
+              helperText={ errorMessage }
+              onChange={ handlerChangeLogin }
+              error={ errorMessage !== undefined }
             />
 
             <TextField
@@ -119,18 +117,18 @@ export function SignIn({ goToSignUp }: ISignInProps) {
               label='Hasło'
               margin='normal'
               type='password'
-              value={password}
+              value={ password }
               variant='outlined'
-              helperText={errorMessage}
-              onChange={handlerChangePassword}
-              error={errorMessage !== undefined}
+              helperText={ errorMessage }
+              onChange={ handlerChangePassword }
+              error={ errorMessage !== undefined }
             />
 
             <FormControlLabel
               control={
                 <Checkbox
-                  value={rememberMe}
-                  onChange={handlerChangeRememberMe}
+                  value={ rememberMe }
+                  onChange={ handlerChangeRememberMe }
                   color='primary'
                 />
               }
@@ -143,8 +141,8 @@ export function SignIn({ goToSignUp }: ISignInProps) {
               type='submit'
               color='primary'
               variant='contained'
-              disabled={login.length === 0 || password.length === 0}
-              className={classes.submit}
+              disabled={ login.length === 0 || password.length === 0 }
+              className={ classes.submit }
             >
               Zaloguj
             </Button>
@@ -152,17 +150,17 @@ export function SignIn({ goToSignUp }: ISignInProps) {
             <Grid container>
               <Link
                 href='#'
-                variant='body2'
-                onClick={goToSignUp}
-                color='secondary'
                 align='center'
+                variant='body2'
+                color='secondary'
+                onClick={ goToSignUp }
               >
                 Nie masz konta? Załóż je już w minutę i do tego <b>za darmo</b>!
               </Link>
             </Grid>
 
-            <Box mt={5}>
-              <Footer />
+            <Box mt={ 5 }>
+              <Footer/>
             </Box>
           </form>
         </div>

@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "title": "Zwrot za zakupy",
+    "userTo": 1,
+    "amount": 200.21,
+    "userFrom": 2,
+    "isoDate": "2020-10-10T10:51:34.996Z"
+  },
+  {
+    "id": 2,
+    "title": "Korepetycje z fizyki",
+    "userTo": 2,
+    "amount": 50,
+    "userFrom": 1,
+    "isoDate": "2020-10-30T11:42:12.356Z"
+  },
+  {
+    "id": 3,
+    "title": "Za lizaka",
+    "userTo": 2,
+    "amount": 1.51,
+    "userFrom": 1,
+    "isoDate": "2020-11-02T12:11:23.647Z"
+  },
+  {
+    "id": 4,
+    "title": "Wypłata",
+    "userTo": 2,
+    "amount": 4321,
+    "userFrom": 1,
+    "isoDate": "2020-11-10T13:22:33.466Z"
+  },
+  {
+    "id": 5,
+    "title": "A kup sobie te buty",
+    "userTo": 3,
+    "amount": 300,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:47:50.217Z"
+  },
+  {
+    "id": 6,
+    "title": "Zwrot za zakupy",
+    "userTo": 3,
+    "amount": 0.01,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:50:39.716Z"
+  },
+  {
+    "id": 7,
+    "title": "Zwrot za zakupy",
+    "userTo": 3,
+    "amount": 10.11,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:51:39.634Z"
+  },
+  {
+    "id": 8,
+    "title": "Wypłata za listopad",
+    "userTo": 1,
+    "amount": 15000,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:56:54.887Z"
+  },
+  {
+    "id": 9,
+    "title": "Wypłata za listopad",
+    "userTo": 3,
+    "amount": 15000,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:59:32.238Z"
+  },
+  {
+    "id": 10,
+    "title": "Wypłata za listopad",
+    "userTo": 4,
+    "amount": 2000,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T17:59:50.606Z"
+  },
+  {
+    "id": 11,
+    "title": "Wypłata za listopad",
+    "userTo": 3,
+    "amount": 15000,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T18:06:06.367Z"
+  },
+  {
+    "id": 12,
+    "title": "Wypłata za listopad",
+    "userTo": 1,
+    "amount": 499,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:03:38.783Z"
+  },
+  {
+    "id": 13,
+    "title": "Wypłata za listopad 2",
+    "userTo": 3,
+    "amount": 0.91,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:04:55.099Z"
+  },
+  {
+    "id": 14,
+    "title": "Wypłata za listopad 4",
+    "userTo": 3,
+    "amount": 0.05,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:05:09.550Z"
+  },
+  {
+    "id": 15,
+    "title": "Wypłata za listopad",
+    "userTo": 1,
+    "amount": 0.02,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:05:22.413Z"
+  },
+  {
+    "id": 16,
+    "title": "Zwrot za zakupy",
+    "userTo": 4,
+    "amount": 10,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:08:05.467Z"
+  },
+  {
+    "id": 17,
+    "title": "Wypłata za listopad",
+    "userTo": 3,
+    "amount": 10,
+    "userFrom": 2,
+    "isoDate": "2020-11-17T21:18:40.760Z"
+  }
+]

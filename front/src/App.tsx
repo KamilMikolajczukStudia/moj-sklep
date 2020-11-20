@@ -1,15 +1,22 @@
-import React from 'react'
+import React, {} from 'react'
 
-import { UserContextProvider } from './User'
-import AppState from './AppState'
-import { CssBaseline } from '@material-ui/core'
+import { CssBaseline } from "@material-ui/core"
+
+import { UserContextProvider }               from './User'
+import { HttpContextProvider }               from './Http'
+import { StateContextProvider, StateRouter } from './State'
+
 
 export default function App() {
   return (
-    <UserContextProvider>
-      <CssBaseline />
-
-      <AppState />
-    </UserContextProvider>
+    <CssBaseline>
+      <StateContextProvider>
+        <HttpContextProvider>
+          <UserContextProvider>
+            <StateRouter/>
+          </UserContextProvider>
+        </HttpContextProvider>
+      </StateContextProvider>
+    </CssBaseline>
   )
 }

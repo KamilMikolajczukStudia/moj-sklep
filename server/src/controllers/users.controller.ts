@@ -1,79 +1,47 @@
-import { NextFunction, Request, Response } from 'express'
-import { CreateUserDto } from '../dtos/users.dto'
-import { User } from '../interfaces/users.interface'
+import { NextFunction, Response } from 'express'
+
 import userService from '../services/users.service'
+import { RequestWithUser } from '../interfaces/auth.interface'
+import { LimitDto } from 'dtos/users.dto'
 
 class UsersController {
   public userService = new userService()
 
-  public getUsers = async (req: Request, res: Response, next: NextFunction) => {
+  public getUsersNames = async (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const user = req.user
+
     try {
-      const findAllUsersData: User[] = await this.userService.findAllUser()
-      res.status(200).json({ data: findAllUsersData, message: 'findAll' })
+      const otherUsers = await this.userService.select((u) => u.id !== user.id)
+
+      res.status(200).json({
+        data: otherUsers.map(({ id, login, cardNumber }) => ({
+          id,
+          login: `${login} (${cardNumber})`
+        })),
+        message: 'otherUsersNames'
+      })
     } catch (error) {
       next(error)
     }
   }
 
-  public getUserById = async (
-    req: Request,
+  public updateLimit = async (
+    req: RequestWithUser<LimitDto>,
     res: Response,
     next: NextFunction
   ) => {
-    const userId: number = Number(req.params.id)
+    const user = req.user
+    const limit = req.body.limit
 
     try {
-      const findOneUserData: User = await this.userService.findUserById(userId)
-      res.status(200).json({ data: findOneUserData, message: 'findOne' })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  public createUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const userData: CreateUserDto = req.body
-
-    try {
-      const createUserData: User = await this.userService.createUser(userData)
-      res.status(201).json({ data: createUserData, message: 'created' })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  public updateUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const userId: number = Number(req.params.id)
-    const userData: User = req.body
-
-    try {
-      const updateUserData: User[] = await this.userService.updateUser(
-        userId,
-        userData
-      )
-      res.status(200).json({ data: updateUserData, message: 'updated' })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  public deleteUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const userId: number = Number(req.params.id)
-
-    try {
-      const deleteUserData: User[] = await this.userService.deleteUser(userId)
-      res.status(200).json({ data: deleteUserData, message: 'deleted' })
+      const newUser = await this.userService.updateLimit(user, limit)
+      res
+        .status(201)
+        .json({ data: newUser.getData(), message: 'updateUser' })
     } catch (error) {
       next(error)
     }

@@ -1,33 +1,34 @@
-import React, {
-  useState,
-  useCallback,
-  createContext,
-  ReactNode,
-  useEffect
-} from 'react'
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { http } from '../Http'
-import { User } from './User'
+import { HttpContext }  from '../Http'
+import { User }         from './User'
+import { StateContext } from '../State'
+import { useInit }      from '../utils'
 
 interface IUserContextValue {
-  loaded: boolean
   isLogin: boolean
+  user: User
   signOut: () => void
   signIn: (user: User) => void
-  user: User
+  reload: (errorCallback?: () => void) => void
 }
 
 const defaultValue: IUserContextValue = {
-  loaded: false,
   isLogin: false,
-  signOut: () => {},
-  signIn: (user: User) => {},
+  signOut: () => {
+  },
+  signIn: () => {
+  },
+  reload: () => {
+  },
   user: {
     id: -1,
-    login: '',
+    login: '-',
+    limit: 0,
     money: 0,
-    isAdmin: false
-  }
+    isAdmin: false,
+    cardNumber: '0 000 000 000 000 000',
+  },
 }
 
 export const UserContext = createContext<IUserContextValue>(defaultValue)
@@ -41,41 +42,52 @@ interface ISuccessCheckLogin {
   message: 'auth'
 }
 
-export function UserContextProvider({
-  children
-}: IUserContextProviderProps) {
-  const [loaded, setLoaded] = useState(false)
-  const [isLogin, setIsLogin] = useState(defaultValue.isLogin)
-  const [user, setUser] = useState(defaultValue.user)
+export function UserContextProvider({ children }: IUserContextProviderProps) {
+  const { post } = useContext(HttpContext)
+  const { goToSignIn, goToContent } = useContext(StateContext)
+
+  const [ isLogin, setIsLogin ] = useState(defaultValue.isLogin)
+  const [ user, setUser ] = useState(defaultValue.user)
 
   const signOut = useCallback(() => {
     setUser(defaultValue.user)
     setIsLogin(false)
-  }, [])
+    goToSignIn()
+  }, [ goToSignIn ])
 
   const signIn = useCallback((user: User) => {
     setUser(user)
     setIsLogin(true)
-  }, [])
+    goToContent()
+  }, [ goToContent ])
 
-  useEffect(() => {
+  const reload = useCallback((errorCallback?: () => void) => {
     async function CheckIsUserLogin() {
       try {
-        const { data: user } = await http<ISuccessCheckLogin>('/auth', 'post')
+        const result = await post<ISuccessCheckLogin>('/auth', undefined, false)
 
-        signIn(user)
+        if (result !== null) {
+          const { data: newUser } = result
+
+          signIn(newUser)
+        } else if (errorCallback) {
+          errorCallback()
+        }
       } catch (e) {
-      } finally {
-        setLoaded(true)
+        if (errorCallback) {
+          errorCallback()
+        }
       }
     }
 
-    CheckIsUserLogin()
-  }, [])
+    CheckIsUserLogin().then()
+  }, [signIn, post])
+
+  useInit(() => reload(goToSignIn))
 
   return (
-    <UserContext.Provider value={{ signOut, signIn, loaded, isLogin, user }}>
-      {children}
+    <UserContext.Provider value={ { reload, signOut, signIn, isLogin, user } }>
+      { children }
     </UserContext.Provider>
   )
 }

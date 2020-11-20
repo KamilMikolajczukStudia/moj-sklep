@@ -1,17 +1,19 @@
 import { NextFunction, Response } from 'express'
 import * as jwt from 'jsonwebtoken'
+
+import UserService from '../services/users.service'
 import HttpException from '../exceptions/HttpException'
 import {
   DataStoredInToken,
   RequestWithUser
 } from '../interfaces/auth.interface'
-import userModel from '../models/users.model'
 
-function authMiddleware(
+export default async function authMiddleware(
   req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) {
+  const userService = new UserService()
   const cookies = req.cookies
 
   if (cookies && cookies.Authorization) {
@@ -23,20 +25,15 @@ function authMiddleware(
         secret
       ) as DataStoredInToken
       const userId = verificationResponse.id
-      const findUser = userModel.find((user) => user.id === userId)
+      const findUser = await userService.selectOne((user) => user.id === userId)
 
       if (findUser) {
         req.user = findUser
         next()
-      } else {
-        next(new HttpException(401, 'Nieprawidłowy token logowania'))
+        return
       }
-    } catch (error) {
-      next(new HttpException(401, 'Nieprawidłowy token logowania'))
-    }
-  } else {
-    next(new HttpException(404, 'Użytkownik niezalogowany'))
+    } catch {}
   }
-}
 
-export default authMiddleware
+  next(new HttpException(401, 'Użytkownik niezalogowany'))
+}

@@ -1,71 +1,91 @@
-import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
-import { CreateUserDto } from '../dtos/users.dto'
-import HttpException from '../exceptions/HttpException'
-import { DataStoredInToken, TokenData } from '../interfaces/auth.interface'
-import { User } from '../interfaces/users.interface'
-import userModel from '../models/users.model'
-import { isEmptyObject } from '../utils/util'
+import * as bcrypt from "bcrypt"
+import * as jwt from "jsonwebtoken"
+
+import UserService from "./users.service"
+import { User } from "../interfaces/User"
+import { isEmptyObject } from "../utils/util"
+import HttpException from "../exceptions/HttpException"
+import { SignUpUserDto, SignInUserDto } from "../dtos/users.dto"
+import { DataStoredInToken, TokenData } from "../interfaces/auth.interface"
 
 class AuthService {
-  public users = userModel
+  private static initialMoney = 200
 
-  public async signup(userData: CreateUserDto): Promise<User> {
-    if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
+  private usersService = new UserService()
 
-    const findUser: User = this.users.find(
+  public async signUp(userData: SignUpUserDto) {
+    if (isEmptyObject(userData)) {
+      throw new HttpException(400, "Błędne dane")
+    }
+
+    const findUser = await this.usersService.selectOne(
       (user) => user.login === userData.login
     )
 
-    if (findUser)
+    if (findUser) {
       throw new HttpException(409, `Twój login '${userData.login}' jest zajęty`)
+    }
 
     const hashedPassword = await bcrypt.hash(userData.password, 10)
-    const createUserData: User = {
-      id: this.users.length + 1,
+    const createUserData = new User({
+      id: await this.usersService.nextId(),
       ...userData,
-      password: hashedPassword
-    }
+      isAdmin: false,
+      money: AuthService.initialMoney,
+      password: hashedPassword,
+      cardNumber: Math.floor(Math.random() * 1e16).toLocaleString("pl-PL", {
+        minimumIntegerDigits: 16,
+      }),
+    })
+
+    await this.usersService.addUser(createUserData)
 
     return createUserData
   }
 
-  public async login(
-    userData: CreateUserDto
-  ): Promise<{ cookie: string; findUser: User }> {
-    if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
+  public async signIn(userData: SignInUserDto) {
+    if (isEmptyObject(userData)) {
+      throw new HttpException(400, "Błędne dane")
+    }
 
-    const findUser: User = this.users.find(
+    const findUser = await this.usersService.selectOne(
       (user) => user.login === userData.login
     )
 
-    if (!findUser)
+    if (!findUser) {
       throw new HttpException(
         409,
         `Twój login '${userData.login}' nie został znaleziony`
       )
+    }
 
-    const isPasswordMatching: boolean = await bcrypt.compare(
+    const isPasswordMatching = await bcrypt.compare(
       userData.password,
       findUser.password
     )
 
-    if (!isPasswordMatching) throw new HttpException(409, 'Błędne hasło')
+    if (!isPasswordMatching) {
+      throw new HttpException(409, "Błędne hasło")
+    }
 
-    const tokenData = this.createToken(findUser)
+    const tokenData = this.createToken(findUser, userData.rememberMe ?  24 * 60 : 60)
     const cookie = this.createCookie(tokenData)
 
     return { cookie, findUser }
   }
 
-  public async logout(userData: User): Promise<User> {
-    if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
+  public async signOut(userData: User) {
+    if (isEmptyObject(userData)) {
+      throw new HttpException(400, "Błędne dane")
+    }
 
-    const findUser: User = this.users.find(
+    const findUser = await this.usersService.selectOne(
       (user) => user.id === userData.id
     )
 
-    if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')
+    if (!findUser) {
+      throw new HttpException(409, "Nie znaleziono użytkownika")
+    }
 
     return findUser
   }
@@ -73,18 +93,18 @@ class AuthService {
   /**
    * @param expiresTime in minutes
    */
-  public createToken(user: User, expiresTime = 60): TokenData {
+  private createToken(user: User, expiresTime: number) {
     const dataStoredInToken: DataStoredInToken = { id: user.id }
-    const secret: string = process.env.JWT_SECRET
-    const expiresIn: number = 60 * expiresTime
+    const secret = process.env.JWT_SECRET
+    const expiresIn = 60 * expiresTime
 
     return {
       expiresIn,
-      token: jwt.sign(dataStoredInToken, secret, { expiresIn })
-    }
+      token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
+    } as TokenData
   }
 
-  public createCookie(tokenData: TokenData): string {
+  private createCookie(tokenData: TokenData): string {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`
   }
 }

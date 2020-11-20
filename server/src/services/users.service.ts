@@ -1,74 +1,85 @@
-import * as bcrypt from 'bcrypt'
-import { CreateUserDto } from '../dtos/users.dto'
+import { writeFile } from 'fs'
+import * as path from 'path'
+
 import HttpException from '../exceptions/HttpException'
-import { User } from '../interfaces/users.interface'
-import userModel from '../models/users.model'
-import { isEmptyObject } from '../utils/util'
+import { User } from '../interfaces/User'
+import users from '../models/users.model'
 
 class UserService {
-  public users = userModel
+  private static users = users
 
-  public async findAllUser(): Promise<User[]> {
-    const users: User[] = this.users
-    return users
+  public async addMoney(user: User, amount: number) {
+    const newSet = UserService.users.map((u) =>
+      u.id === user.id ? new User({ ...user, money: u.money + amount }) : u
+    )
+
+    await this.save(newSet)
+
+    return this.selectOne(u => u.id === user.id)
   }
 
-  public async findUserById(userId: number): Promise<User> {
-    const findUser: User = this.users.find((user) => user.id === userId)
-    if (!findUser) throw new HttpException(409, "You're not user")
+  private async save(newSet: User[]) {
+    return new Promise((resolve, rejects) =>
+      writeFile(
+        path.join(__dirname, '../models/users.json'),
+        JSON.stringify(newSet, undefined, 2) + '\n',
+        (err) => {
+          if (err) rejects(err)
+          else {
+            UserService.users = newSet
+            resolve()
+          }
+        }
+      )
+    )
+  }
+
+  public async updateLimit(user: User, limit: number) {
+    const newSet = UserService.users.map((u) =>
+      u.id === user.id ? new User({ ...user, limit: limit }) : u
+    )
+
+    await this.save(newSet)
+
+    return this.selectOne(u => u.id === user.id)
+  }
+
+  public async select(callback?: (user: User) => boolean) {
+    return callback ? UserService.users.filter(callback) : UserService.users
+  }
+
+  public async selectOne(callback: (user: User) => boolean) {
+    return UserService.users.find(callback)
+  }
+
+  public async selectById(userId: number) {
+    const findUser = this.selectOne((user) => user.id === userId)
+
+    if (!findUser) throw new HttpException(409, 'Użytkownik nie znaleziony')
 
     return findUser
   }
 
-  public async createUser(userData: CreateUserDto): Promise<User> {
-    if (isEmptyObject(userData))
-      throw new HttpException(400, "You're not userData")
-
-    const findUser: User = this.users.find(
-      (user) => user.login === userData.login
-    )
-
-    if (findUser)
-      throw new HttpException(409, `Twój login '${userData.login}' jest zajęty`)
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10)
-    const createUserData: User = {
-      id: this.users.length + 1,
-      ...userData,
-      password: hashedPassword
-    }
-
-    return createUserData
+  public async nextId() {
+    return UserService.users.reduce((id, user) => Math.max(id, user.id), 0) + 1
   }
 
-  public async updateUser(userId: number, userData: User): Promise<User[]> {
-    if (isEmptyObject(userData)) throw new HttpException(400, 'Błędne dane')
+  public async addUser(user: User): Promise<void> {
+    const newSet = [...UserService.users, user]
 
-    const findUser: User = this.users.find((user) => user.id === userId)
-
-    if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10)
-
-    const updateUserData: User[] = this.users.map((user: User) => {
-      if (user.id === findUser.id)
-        user = { id: userId, ...userData, password: hashedPassword }
-      return user
-    })
-
-    return updateUserData
-  }
-
-  public async deleteUser(userId: number): Promise<User[]> {
-    const findUser: User = this.users.find((user) => user.id === userId)
-
-    if (!findUser) throw new HttpException(409, 'Nie znaleziono użytkownika')
-
-    const deleteUserData: User[] = this.users.filter(
-      (user) => user.id !== findUser.id
+    return new Promise((resolve, rejects) =>
+      writeFile(
+        path.join(__dirname, '../models/users.json'),
+        JSON.stringify(newSet, undefined, 2) + '\n',
+        (err) => {
+          if (err) rejects(err)
+          else {
+            UserService.users = newSet
+            resolve()
+          }
+        }
+      )
     )
-
-    return deleteUserData
   }
 }
 

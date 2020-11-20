@@ -6,7 +6,7 @@ const useStyles = (img: string) =>
       height: '100vh'
     },
     image: {
-      backgroundImage: `url(${img})`,
+      backgroundImage: `url(${ img })`,
       backgroundRepeat: 'no-repeat',
       backgroundColor:
         theme.palette.type === 'light'

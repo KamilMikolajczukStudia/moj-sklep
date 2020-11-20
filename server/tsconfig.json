@@ -6,6 +6,7 @@
     "baseUrl": "./src",
     "alwaysStrict": true,
     "noImplicitAny": true,
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,

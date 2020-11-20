@@ -1,8 +1,9 @@
 import { Router } from 'express'
-import AuthController from '../controllers/auth.controller'
-import { CreateUserDto } from '../dtos/users.dto'
+
 import Route from '../interfaces/routes.interface'
+import AuthController from '../controllers/auth.controller'
 import authMiddleware from '../middlewares/auth.middleware'
+import { SignUpUserDto, SignInUserDto } from '../dtos/users.dto'
 import validationMiddleware from '../middlewares/validation.middleware'
 
 class AuthRoute implements Route {
@@ -16,13 +17,13 @@ class AuthRoute implements Route {
   private initializeRoutes() {
     this.router.post(
       `/signup`,
-      validationMiddleware(CreateUserDto),
+      validationMiddleware(SignUpUserDto),
       this.authController.signUp
     )
     
     this.router.post(
       `/signin`,
-      validationMiddleware(CreateUserDto),
+      validationMiddleware(SignInUserDto),
       this.authController.signIn
     )
 
