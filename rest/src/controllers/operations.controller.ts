@@ -1,9 +1,9 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Response } from "express"
 
-import { RequestWithUser } from '../interfaces/auth.interface'
+import { RequestWithUser } from "../interfaces/auth.interface"
 
-import { OperationDto } from '../dtos'
-import { OperaionsService } from '../Imports'
+import { OperationDto } from "../dtos"
+import { OperaionsService } from "../Imports"
 
 export class OperationsController {
   private operationsService = new OperaionsService()
@@ -24,7 +24,7 @@ export class OperationsController {
 
       res
         .status(201)
-        .json({ data: operation.dto(), message: 'createOperation' })
+        .json({ data: operation.dto(), message: "createOperation" })
     } catch (error) {
       next(error)
     }
@@ -40,9 +40,10 @@ export class OperationsController {
     try {
       const operations = await this.operationsService.getAllUserOperations(user)
 
-      res
-        .status(201)
-        .json({ data: operations.map(op => op.dto()), message: 'allOperations' })
+      res.status(201).json({
+        data: await Promise.all(operations.map((op) => op.dto(user))),
+        message: "allOperations",
+      })
     } catch (error) {
       next(error)
     }

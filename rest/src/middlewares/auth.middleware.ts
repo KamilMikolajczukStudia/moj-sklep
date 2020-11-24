@@ -1,8 +1,8 @@
-import { NextFunction, Response } from 'express'
+import { NextFunction, Response } from "express"
 
-import { AuthService } from '../Imports'
-import HttpException from '../exceptions/HttpException'
-import { RequestWithUser } from '../interfaces/auth.interface'
+import { AuthService } from "../Imports"
+import { HttpException } from "../exceptions"
+import { RequestWithUser } from "../interfaces/auth.interface"
 
 export async function authMiddleware(
   req: RequestWithUser,
@@ -22,5 +22,5 @@ export async function authMiddleware(
     }
   }
 
-  next(new HttpException(401, 'Użytkownik niezalogowany'))
+  next(new HttpException(401, "Użytkownik niezalogowany"))
 }

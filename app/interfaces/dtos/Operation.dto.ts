@@ -6,7 +6,8 @@ export interface INewOperationDto {
 
 export interface IOperationDto {
   id: number
-  title: string
   amount: number
-  userTo: number
+  title: string
+  isoDate: string
+  userName: string
 }

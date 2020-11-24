@@ -166,5 +166,13 @@
     "userTo": 3,
     "userFrom": 2,
     "isoDate": "2020-11-21T22:51:24.404Z"
+  },
+  {
+    "operationId": 22,
+    "title": "Wypłata za listopad",
+    "amount": 230,
+    "userTo": 3,
+    "userFrom": 2,
+    "isoDate": "2020-11-23T18:54:22.060Z"
   }
 ]

@@ -1,5 +1,6 @@
-import { NextFunction, Request, Response } from 'express'
-import HttpException from '../exceptions/HttpException'
+import { NextFunction, Request, Response } from "express"
+
+import { HttpException } from "../exceptions"
 
 export function errorMiddleware(
   error: HttpException,
@@ -8,9 +9,9 @@ export function errorMiddleware(
   next: NextFunction
 ) {
   const status: number = error.status || 500
-  const message: string = error.message || ' Coś poszło nie tak'
+  const message: string = error.message || " Coś poszło nie tak"
 
-  console.error('[ERROR] ', status, message)
+  console.error("[ERROR] ", status, message)
   console.error(error)
 
   res.status(status).json({ message })

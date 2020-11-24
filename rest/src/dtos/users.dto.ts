@@ -1,4 +1,4 @@
-import { IsBoolean, IsPositive, IsString } from 'class-validator'
+import { IsBoolean, IsNumber, IsString } from 'class-validator'
 
 import { INewUserDto, ILoginUserDto } from '../Imports'
 
@@ -22,6 +22,6 @@ export class SignInUserDto implements ILoginUserDto {
 }
 
 export class LimitDto {
-  @IsPositive()
+  @IsNumber()
   public limit: number
 }

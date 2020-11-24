@@ -1,12 +1,12 @@
-import * as hpp from 'hpp'
-import * as cors from 'cors'
-import * as logger from 'morgan'
-import * as helmet from 'helmet'
-import * as express from 'express'
-import * as cookieParser from 'cookie-parser'
+import * as hpp from "hpp"
+import * as cors from "cors"
+import * as logger from "morgan"
+import * as helmet from "helmet"
+import * as express from "express"
+import * as cookieParser from "cookie-parser"
 
-import { Route } from './routes/routes.interface'
-import { errorMiddleware } from './middlewares'
+import { errorMiddleware } from "./middlewares"
+import { Route } from "./routes/routes.interface"
 
 export class App {
   public app: express.Application
@@ -16,7 +16,7 @@ export class App {
   constructor(routes: Route[]) {
     this.app = express()
     this.port = parseInt(process.env.PORT) || 3333
-    this.env = process.env.NODE_ENV === 'production'
+    this.env = process.env.NODE_ENV === "production"
 
     this.initializeMiddlewares()
     this.initializeRoutes(routes)
@@ -37,10 +37,10 @@ export class App {
     if (this.env) {
       this.app.use(hpp())
       this.app.use(helmet())
-      this.app.use(logger('combined'))
+      this.app.use(logger("combined"))
       this.app.use(cors({ origin: /localhost/, credentials: true }))
     } else {
-      this.app.use(logger('dev'))
+      this.app.use(logger("dev"))
       this.app.use(cors({ origin: /localhost/, credentials: true }))
     }
 
@@ -51,7 +51,7 @@ export class App {
 
   private initializeRoutes(routes: Route[]) {
     for (const { router } of routes) {
-      this.app.use('/', router)
+      this.app.use("/", router)
     }
   }
 

@@ -14,8 +14,8 @@
     "isAdmin": true,
     "password": "$2b$10$bWxZvnJsCcj0TBKtNQ/NoeP82IAGEtJxPxO72gpwTfignSgG2vzo2",
     "cardNumber": "3 802 856 806 862 427",
-    "money": 19989,
-    "limit": 1001
+    "money": 19759,
+    "limit": 0
   },
   {
     "userId": 3,
@@ -23,7 +23,7 @@
     "isAdmin": false,
     "password": "$2b$10$bWxZvnJsCcj0TBKtNQ/NoeP82IAGEtJxPxO72gpwTfignSgG2vzo2",
     "cardNumber": "1 252 611 403 862 575",
-    "money": 42152.48,
+    "money": 42382.48,
     "limit": 1000,
     "amount": 44279.48
   },

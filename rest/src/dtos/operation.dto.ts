@@ -1,4 +1,4 @@
-import { IsPositive, IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
 
 import { INewOperationDto } from '../Imports'
 
@@ -6,9 +6,9 @@ export class OperationDto implements INewOperationDto {
   @IsString()
   public title: string
 
-  @IsPositive()
+  @IsNumber()
   public amount: number
 
-  @IsPositive()
+  @IsNumber()
   public userTo: number
 }

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useContext, useState } from 'react'
+import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from 'react'
 
 import Button                              from '@material-ui/core/Button'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -100,6 +100,7 @@ export default function Transfer() {
       setAmountError('Podaj dodatnią wartość')
       return
     }
+
     if (value > maxAmount) {
       setAmountError('Masz za mało pieniędzy na koncie')
       return
@@ -108,7 +109,7 @@ export default function Transfer() {
     setAmountError(undefined)
     setAmountValue(Math.round(value * 100) / 100)
 
-  }, [ amount ])
+  }, [ amount, maxAmount ])
 
   const handleSend = useCallback(() => {
     setLoading(true)
@@ -133,6 +134,8 @@ export default function Transfer() {
   const handleChangeUserTo = useCallback((event: any, newValue: IUserNameSearch | null) => {
     setUserTo(newValue)
   }, [])
+
+  useEffect(handleCheckAmount, [amountValue])
 
   return (
     <>
