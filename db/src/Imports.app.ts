@@ -12,4 +12,4 @@ export type {
   IInsert,
   IInsertable,
   IValuesable,
-} from "../../app/interfaces/db"
+} from "../../core/interfaces/db"

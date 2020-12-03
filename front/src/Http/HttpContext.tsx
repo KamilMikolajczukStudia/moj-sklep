@@ -1,7 +1,8 @@
-import React, { createContext, ReactNode, useCallback, useContext } from 'react'
-import { StateContext }                                             from "../State";
+import React, { createContext, ReactNode, useCallback, useState } from 'react'
 
 const server = "http://localhost:3333"
+
+type TCallback = () => void
 
 const http = (method: 'get' | 'post' | 'put' | 'delete', signOutCallBack: () => void,
 ) => async function <T>(
@@ -38,7 +39,7 @@ const http = (method: 'get' | 'post' | 'put' | 'delete', signOutCallBack: () => 
   } catch (e) {
 
     if (giveErrorMessage) {
-      throw new Error(e)
+      throw new Error(e.message)
     }
 
     console.error(`Fetch error`, e)
@@ -54,12 +55,12 @@ type THttpFn = <T>(
   giveError?: boolean
 ) => Promise<T | null>
 
-
 interface IHttpContextValue {
   get: THttpFn
   post: THttpFn
   put: THttpFn
   delete: THttpFn
+  subscribeOnLogOut: (callback: TCallback) => void
 }
 
 const defaultValue: IHttpContextValue = {
@@ -67,6 +68,7 @@ const defaultValue: IHttpContextValue = {
   post: async () => null,
   put: async () => null,
   delete: async () => null,
+  subscribeOnLogOut: () => void 0,
 }
 
 export const HttpContext = createContext<IHttpContextValue>(defaultValue)
@@ -76,19 +78,27 @@ interface IHttpContextProviderProps {
 }
 
 export function HttpContextProvider({ children }: IHttpContextProviderProps) {
-  const { goToSignIn } = useContext(StateContext)
+  const [ logOutCallbacks, setLogOutCallbacks ] = useState([] as TCallback[])
+
+  const logOutCallBack = useCallback(() => {
+    for (const callback of logOutCallbacks) callback()
+  }, [ logOutCallbacks ])
+
+  const subscribeOnLogOut = useCallback((callback: TCallback) => {
+    setLogOutCallbacks([ ...logOutCallbacks, callback ])
+  }, [ logOutCallbacks ])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const get = useCallback(http('get', goToSignIn), [ goToSignIn ])
+  const get = useCallback(http('get', logOutCallBack), [ logOutCallBack ])
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const post = useCallback(http('post', goToSignIn), [ goToSignIn ])
+  const post = useCallback(http('post', logOutCallBack), [ logOutCallBack ])
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const put = useCallback(http('put', goToSignIn), [ goToSignIn ])
+  const put = useCallback(http('put', logOutCallBack), [ logOutCallBack ])
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const deleteFn = useCallback(http('delete', goToSignIn), [ goToSignIn ])
+  const deleteFn = useCallback(http('delete', logOutCallBack), [ logOutCallBack ])
 
   return (
-    <HttpContext.Provider value={ { get, post, put, delete: deleteFn } }>
+    <HttpContext.Provider value={ { get, post, put, delete: deleteFn, subscribeOnLogOut } }>
       { children }
     </HttpContext.Provider>
   )

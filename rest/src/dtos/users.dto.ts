@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator'
+import { IsBoolean, IsString } from 'class-validator'
 
 import { INewUserDto, ILoginUserDto } from '../Imports'
 
@@ -8,6 +8,11 @@ export class SignUpUserDto implements INewUserDto {
 
   @IsString()
   public password: string
+
+  constructor(login: string, password: string) {
+    this.login = login
+    this.password = password
+  }
 }
 
 export class SignInUserDto implements ILoginUserDto {
@@ -19,9 +24,10 @@ export class SignInUserDto implements ILoginUserDto {
 
   @IsBoolean()
   public rememberMe: boolean
-}
 
-export class LimitDto {
-  @IsNumber()
-  public limit: number
+  constructor(login: string, password: string, rememberMe: boolean) {
+    this.login = login
+    this.password = password
+    this.rememberMe = rememberMe
+  }
 }

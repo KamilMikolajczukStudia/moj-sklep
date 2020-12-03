@@ -1,9 +1,10 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { HttpContext }  from '../Http'
-import { User }         from './User'
-import { StateContext } from '../State'
-import { useInit }      from '../utils'
+import { User }        from './User'
+import { HttpContext } from '../Http'
+import { useInit }     from '../utils'
+
+import { IAuthAuth } from '../Imports'
 
 interface IUserContextValue {
   isLogin: boolean
@@ -23,11 +24,7 @@ const defaultValue: IUserContextValue = {
   },
   user: {
     id: -1,
-    login: '-',
-    limit: 0,
-    money: 0,
-    isAdmin: false,
-    cardNumber: '0 000 000 000 000 000',
+    login: '-'
   },
 }
 
@@ -37,14 +34,8 @@ interface IUserContextProviderProps {
   children: ReactNode
 }
 
-interface ISuccessCheckLogin {
-  data: User
-  message: 'auth'
-}
-
 export function UserContextProvider({ children }: IUserContextProviderProps) {
-  const { post } = useContext(HttpContext)
-  const { goToSignIn, goToContent } = useContext(StateContext)
+  const { post, subscribeOnLogOut } = useContext(HttpContext)
 
   const [ isLogin, setIsLogin ] = useState(defaultValue.isLogin)
   const [ user, setUser ] = useState(defaultValue.user)
@@ -52,19 +43,19 @@ export function UserContextProvider({ children }: IUserContextProviderProps) {
   const signOut = useCallback(() => {
     setUser(defaultValue.user)
     setIsLogin(false)
-    goToSignIn()
-  }, [ goToSignIn ])
+  }, [])
+
+  useInit(() => subscribeOnLogOut(signOut))
 
   const signIn = useCallback((user: User) => {
     setUser(user)
     setIsLogin(true)
-    goToContent()
-  }, [ goToContent ])
+  }, [])
 
   const reload = useCallback((errorCallback?: () => void) => {
     async function CheckIsUserLogin() {
       try {
-        const result = await post<ISuccessCheckLogin>('/auth', undefined, false)
+        const result = await post<IAuthAuth>('/auth/auth', undefined, false)
 
         if (result !== null) {
           const { data: newUser } = result
@@ -81,9 +72,9 @@ export function UserContextProvider({ children }: IUserContextProviderProps) {
     }
 
     CheckIsUserLogin().then()
-  }, [signIn, post])
+  }, [ signIn, post ])
 
-  useInit(() => reload(goToSignIn))
+  useInit(reload)
 
   return (
     <UserContext.Provider value={ { reload, signOut, signIn, isLogin, user } }>

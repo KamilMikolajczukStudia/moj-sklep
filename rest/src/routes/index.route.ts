@@ -4,7 +4,7 @@ import { Route } from './routes.interface'
 import { IndexController } from '../controllers'
 
 class IndexRoute implements Route {
-  public path = '/'
+  public basePath = '/'
   public router = Router()
 
   private indexController = new IndexController()
@@ -14,7 +14,7 @@ class IndexRoute implements Route {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, this.indexController.index)
+    this.router.get(`${this.basePath}`, this.indexController.index)
   }
 }
 

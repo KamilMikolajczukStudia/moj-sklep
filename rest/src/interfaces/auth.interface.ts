@@ -11,6 +11,8 @@ export interface TokenData {
   expiresIn: number
 }
 
+export type AnnonimusRequest = Request
+
 export interface RequestWithUser<T = never> extends Request {
   body: T
   user: User

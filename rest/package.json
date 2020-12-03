@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "moj-sklep-rest",
   "version": "0.0.0",
-  "description": "TypeScript + Express API Server",
+  "description": "Mój sklep REST API Server",
   "author": "",
   "license": "ISC",
   "scripts": {

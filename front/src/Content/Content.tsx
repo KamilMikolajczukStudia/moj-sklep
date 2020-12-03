@@ -1,23 +1,21 @@
-import React, { ChangeEvent, MouseEvent, useCallback, useContext, useState } from 'react'
-import SwipeableViews                                                        from 'react-swipeable-views'
-
-import Tab                                 from '@material-ui/core/Tab'
-import Tabs                                from '@material-ui/core/Tabs'
-import Paper                               from '@material-ui/core/Paper'
-import AppBar                              from '@material-ui/core/AppBar'
-import Toolbar                             from '@material-ui/core/Toolbar'
+import React, { useContext }               from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import IconButton                          from '@material-ui/core/IconButton'
-import Typography                          from '@material-ui/core/Typography'
-import useTheme                            from '@material-ui/core/styles/useTheme'
-import PowerSettingsNewIcon                from '@material-ui/icons/PowerSettingsNew'
 
-import Logo     from '../Logo'
-import Transfer from '../Transfer'
-import TabPanel from './TabPanel'
-import { UserContext } from '../User'
-import { HttpContext } from "../Http"
-import MyAccount       from '../MyAccount'
+import Grid             from '@material-ui/core/Grid'
+import Paper            from '@material-ui/core/Paper'
+import AppBar           from '@material-ui/core/AppBar'
+import Toolbar          from '@material-ui/core/Toolbar'
+import Typography       from '@material-ui/core/Typography'
+import Container        from '@material-ui/core/Container'
+import CircularProgress from '@material-ui/core/CircularProgress'
+
+import Logo                from '../Logo'
+import { UserMenu }        from '../User'
+import { Cart }            from '../Cart'
+import { For, If }         from '../utils'
+import { Product }         from './Product'
+import { Options }         from './Options'
+import { ProductsContext } from '../Products'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,81 +27,70 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       flexGrow: 1,
     },
-    views: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      '& .react-swipeable-view-container': {
-        flex: 1
-      }
+    container: {
+      marginTop: theme.spacing(2)
+    },
+    loading: {
+      margin: 'auto',
+      gridColumn: 2
+    },
+    products: {
+      padding: theme.spacing(1),
+      display: 'grid',
+
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+      },
+      [theme.breakpoints.down('sm')]: {
+        gridTemplateColumns: 'repeat(1, 1fr)',
+      },
     }
   }),
 )
 
-export default function Content() {
+export function Content() {
   const classes = useStyles()
-  const theme = useTheme()
-  const { signOut } = useContext(UserContext)
-  const { post } = useContext(HttpContext)
 
-  const [ tab, setTab ] = useState(0)
-
-  const handleChange = useCallback(
-    (event: ChangeEvent<{}>, newValue: number) => {
-      setTab(newValue)
-    },
-    [],
-  )
-
-  const handleSignOut = useCallback(
-    (event: MouseEvent<HTMLElement>) => {
-      signOut()
-      post<never>('/signout').then()
-    },
-    [ post, signOut ],
-  )
-
-  const handleChangeIndex = useCallback((index: number) => {
-    setTab(index)
-  }, [])
+  const { products, loaded } = useContext(ProductsContext)
 
   return (
     <>
       <AppBar position="static">
         <Toolbar>
-          <Logo className={ classes.logo } />
+          <Logo className={ classes.logo }/>
 
-          <Typography variant="h6" className={ classes.title }>
-            Mój bank
-          </Typography>
+          <Typography variant="h6" className={ classes.title }>Mój sklep</Typography>
 
-          <IconButton onClick={ handleSignOut } color="inherit" title="Wyloguj">
-            <PowerSettingsNewIcon />
-          </IconButton>
+          <Cart/>
+
+          <UserMenu/>
         </Toolbar>
       </AppBar>
 
-      <Paper elevation={ 4 } square>
-        <Tabs value={ tab } onChange={ handleChange }>
-          <Tab label="Moje konto" />
-          <Tab label="Super przelew" />
-        </Tabs>
-      </Paper>
+      <Container maxWidth="lg">
+        <Grid container spacing={ 2 } className={ classes.container }>
+          <Grid item md={ 3 } sm={ 4 } xs={ 12 }>
+            <Options/>
+          </Grid>
 
-      <SwipeableViews
-        index={ tab }
-        className={ classes.views }
-        onChangeIndex={ handleChangeIndex }
-        axis={ theme.direction === 'rtl' ? 'x-reverse' : 'x' }
-      >
-        <TabPanel value={ tab } index={ 0 } dir={ theme.direction }>
-          <MyAccount />
-        </TabPanel>
+          <Grid item md={ 9 } sm={ 8 } xs={ 12 }>
+            <Paper className={ classes.products }>
+              <If condition={ !loaded }>
+                <CircularProgress className={ classes.loading }/>
+              </If>
 
-        <TabPanel value={ tab } index={ 1 } dir={ theme.direction }>
-          <Transfer />
-        </TabPanel>
-      </SwipeableViews>
+              <If condition={ loaded && products.length === 0 }>
+                <Typography className={ classes.loading }>Brak produktów</Typography>
+              </If>
+
+              <For of={ products } disableWrapper>
+                { (product) => <Product key={ product.id } data={ product }/> }
+              </For>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
     </>
   )
 }

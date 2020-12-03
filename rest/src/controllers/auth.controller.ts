@@ -1,9 +1,15 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from "express"
 
-import { AuthService } from '../Imports'
+import { AuthService } from "../Imports"
 
-import { RequestWithUser } from '../interfaces/auth.interface'
-import { SignInUserDto, SignUpUserDto } from '../dtos/Users.dto'
+import { RequestWithUser } from "../interfaces/auth.interface"
+import { SignInUserDto, SignUpUserDto } from "../dtos/Users.dto"
+import {
+  IAuthAuth,
+  IAuthSignIn,
+  IAuthSignOut,
+  IAuthSignUp,
+} from "endpoints"
 
 export class AuthController {
   private authService = new AuthService()
@@ -13,7 +19,8 @@ export class AuthController {
 
     try {
       const signUpUserData = await this.authService.signUp(userData)
-      res.status(201).json({ data: signUpUserData.dto(), message: 'signUp' })
+
+      res.status(201).json({ data: {}, message: "sign-up" } as IAuthSignUp)
     } catch (error) {
       next(error)
     }
@@ -25,8 +32,10 @@ export class AuthController {
     try {
       const { cookie, user } = await this.authService.signIn(userData)
 
-      res.setHeader('Set-Cookie', [cookie])
-      res.status(200).json({ data: user.dto(), message: 'signIn' })
+      res.setHeader("Set-Cookie", [cookie])
+      res
+        .status(200)
+        .json({ data: user.dto(), message: "sign-in" } as IAuthSignIn)
     } catch (error) {
       next(error)
     }
@@ -37,13 +46,9 @@ export class AuthController {
     res: Response,
     next: NextFunction
   ) => {
-    const userData = req.user
-
     try {
-      await this.authService.signOut(userData)
-
-      res.setHeader('Set-Cookie', ['Authorization=; Max-age=0'])
-      res.status(200).json({ data: null, message: 'logout' })
+      res.setHeader("Set-Cookie", ["Authorization=; Max-age=0"])
+      res.status(401).json({ data: {}, message: "sign-out" } as IAuthSignOut)
     } catch (error) {
       next(error)
     }
@@ -52,6 +57,6 @@ export class AuthController {
   public auth = (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
-    res.status(200).json({ data: user.dto(), message: 'auth' })
+    res.status(200).json({ data: user.dto(), message: "auth" } as IAuthAuth)
   }
 }

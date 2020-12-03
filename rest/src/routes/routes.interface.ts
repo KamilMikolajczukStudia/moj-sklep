@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 export interface Route {
-  path?: string
+  basePath: string
   router: Router
 }
 
