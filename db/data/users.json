@@ -8,5 +8,17 @@
     "userId": 2,
     "login": "kamil",
     "password": "$2b$10$bWxZvnJsCcj0TBKtNQ/NoeP82IAGEtJxPxO72gpwTfignSgG2vzo2"
+  },
+  {
+    "userId": 3,
+    "login": "Andrzej Duda",
+    "password": "$2b$10$7qcus/X/g2C1DsYnYEUxauOACln5WDDrsW6aJzg4YsHKnd/896wg.",
+    "isoDate": "2020-12-05T15:51:49.071Z"
+  },
+  {
+    "userId": 4,
+    "login": "ooo",
+    "password": "$2b$10$aLKg4JoU5U2gYeCPKG.mPu4yPigO9IVHDh0xaqcIUjnL9TdYHDP/O",
+    "isoDate": "2020-12-07T21:19:39.469Z"
   }
 ]

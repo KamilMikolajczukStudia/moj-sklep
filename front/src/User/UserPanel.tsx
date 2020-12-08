@@ -96,6 +96,5 @@ export function UserPanel() {
 
       <Button onClick={ handleSignOut } size="large" color="primary">Wyloguj</Button>
     </DialogContent>
-
   )
 }

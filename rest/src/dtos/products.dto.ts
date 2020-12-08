@@ -1,4 +1,3 @@
 import { IsNumber, IsString } from 'class-validator'
 
-import { IProductDto } from '../Imports'
-
+export type { IProductDto } from '../Imports'

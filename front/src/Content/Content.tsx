@@ -16,6 +16,7 @@ import { For, If }         from '../utils'
 import { Product }         from './Product'
 import { Options }         from './Options'
 import { ProductsContext } from '../Products'
+import reklamaKredytu      from '../img/kredyt.png'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -88,6 +89,8 @@ export function Content() {
                 { (product) => <Product key={ product.id } data={ product }/> }
               </For>
             </Paper>
+
+            <img style={{ width: '100%', marginTop: 20 }} src={reklamaKredytu} alt="Kredyt" />
           </Grid>
         </Grid>
       </Container>

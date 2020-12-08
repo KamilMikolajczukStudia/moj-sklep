@@ -42,21 +42,13 @@ export function Review() {
   return (
     <>
       <List disablePadding>
-        <For of={ products }>
-          { (product) =>
-            <ListItem className={ classes.listItem } key={ product.name }>
-              <ListItemText primary={ product.name } secondary={ product.desc }/>
-
-              <Typography variant="body2">{ product.price }</Typography>
-            </ListItem>
-          }
-        </For>
+        W trakcie prac
 
         <ListItem className={ classes.listItem }>
           <ListItemText primary="Razem"/>
 
           <Typography variant="subtitle1" className={ classes.total }>
-            <Money value={ 2 }/>
+            <Money value={ 0 }/>
           </Typography>
         </ListItem>
       </List>
@@ -67,8 +59,8 @@ export function Review() {
             Dostawa
           </Typography>
 
-          <Typography gutterBottom>{ 'Jan' } { 'Kowalski' }</Typography>
-          <Typography gutterBottom>{ addresses.join(', ') }</Typography>
+          <Typography gutterBottom>W trakcie</Typography>
+          <Typography gutterBottom>  prac </Typography>
         </Grid>
 
         <Grid item container direction="column" xs={ 12 } sm={ 6 }>
@@ -77,19 +69,7 @@ export function Review() {
           </Typography>
 
           <Grid container>
-            <For of={ payments } disableWrapper>
-              { (payment) =>
-                <Fragment key={ payment.name }>
-                  <Grid item xs={ 6 }>
-                    <Typography gutterBottom>{ payment.name }</Typography>
-                  </Grid>
-
-                  <Grid item xs={ 6 }>
-                    <Typography gutterBottom>{ payment.detail }</Typography>
-                  </Grid>
-                </Fragment>
-              }
-            </For>
+            W trakcie prac
           </Grid>
         </Grid>
       </Grid>
