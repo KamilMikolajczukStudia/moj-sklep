@@ -1,13 +1,13 @@
-import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
+import * as bcrypt from "bcrypt"
+import * as jwt from "jsonwebtoken"
 
-import { User } from '../models'
-import { AuthExeception } from '../exceptions'
-import { UserRepository } from '../repositories'
-import { DataStoredInToken, TokenData } from './Auth.interface'
-import { INewUserDto, ILoginUserDto } from '../dtos'
+import { User } from "../models"
+import { AuthExeception } from "../exceptions"
+import { UserRepository } from "../../Imports"
+import { INewUserDto, ILoginUserDto } from "../dtos"
+import { DataStoredInToken, TokenData } from "./Auth.interface"
 
-import * as config from '../config.json'
+import * as config from "../config.json"
 
 interface ILoginData {
   cookie: string
@@ -22,12 +22,10 @@ export class AuthService {
       throw new AuthExeception(401, `Twój login '${userDto.login}' jest zajęty`)
     }
 
-    return new User(
-      await this.userRepository.addNew({
-        ...userDto,
-        password: await this.generatePasswordHash(userDto.password)
-      })
-    )
+    return await this.userRepository.addNew({
+      ...userDto,
+      password: await this.generatePasswordHash(userDto.password),
+    })
   }
 
   public async signIn(userData: ILoginUserDto): Promise<ILoginData> {
@@ -43,7 +41,7 @@ export class AuthService {
     )
 
     if (!isPasswordMatching) {
-      throw new AuthExeception(401, 'Login lub hasło nieprawidłowe')
+      throw new AuthExeception(401, "Login lub hasło nieprawidłowe")
     }
 
     const tokenData = this.createToken(
@@ -78,7 +76,7 @@ export class AuthService {
 
     return {
       expiresIn,
-      token: jwt.sign(dataStoredInToken, secret, { expiresIn })
+      token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
     } as TokenData
   }
 

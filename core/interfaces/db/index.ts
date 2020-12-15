@@ -1,5 +1,0 @@
-export * from "./helpers/ICondition"
-export * from "./helpers/IRow"
-export * from "./ISelect"
-export * from "./IInsert"
-export * from "./IUpdate"

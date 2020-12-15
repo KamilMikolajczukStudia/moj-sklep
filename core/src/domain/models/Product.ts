@@ -1,8 +1,7 @@
 import { Money } from "./Money"
 import { Variant } from "./Variant"
-import { IProductDao } from "../daos"
 import { IProductDto } from "../dtos"
-
+import { Exception } from "../../utils"
 
 export class Product {
   readonly id: number
@@ -11,28 +10,49 @@ export class Product {
   readonly price: Money
   readonly img: string
   readonly unit: string
+  /**
+   * Orginal price or 0
+   */
   readonly discount: Money
   readonly variants: Variant[]
 
-  constructor(product: IProductDao) {
-    this.id = product.productId
-    this.name = product.name
-    this.description = product.description
+  constructor(
+    id: number,
+    name: string,
+    description: string,
+    price: Money,
+    img: string,
+    unit: string,
+    variants: Variant[],
+    discount = Money.Zero
+  ) {
+    if (name.length === 0) {
+      throw new Exception(`Product name must not be empty`)
+    }
 
-    this.price = new Money(product.price)
-    this.img = product.img
-    this.unit = product.unit
-    this.discount = new Money(product.discount)
+    if (price.lessThen(Money.Zero)) {
+      throw new Exception(`Product ${name} price must be positive`)
+    }
 
-    const variantsQuantity = product.variantsQuantity.split(",")
-    this.variants = product.variants.length
-      ? product.variants
-          .split(",")
-          .map((name, i) => new Variant(name, parseInt(variantsQuantity[i])))
-      : []
+    this.id = id
+    this.name = name
+    this.description = description
+    this.price = price
+    this.img = img
+    this.unit = unit
+    this.variants = variants
+    this.discount = discount.lessThenEqual(price) ? Money.Zero : discount
   }
 
-  public dto(): IProductDto {
+  isOnPromotion() {
+    return this.discount.lessThenEqual(Money.Zero)
+  }
+
+  promotionAmount() {
+    return this.isOnPromotion() ? this.discount.subtract(this.price) : Money.Zero
+  }
+
+  dto(): IProductDto {
     const { price, discount, variants, ...rest } = this
 
     return {

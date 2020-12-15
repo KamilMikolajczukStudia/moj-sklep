@@ -8,4 +8,4 @@ export * from "./src/domain/services"
 export * from "./src/domain/models"
 export * from "./src/domain/dtos"
 
-export * from "./interfaces"
+export { Exception } from "./src/utils"

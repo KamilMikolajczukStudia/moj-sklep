@@ -1,5 +1,4 @@
-import { User } from "authentication/models"
-import { OrderProposal } from "./Order"
+import { OrderProposal } from "./OrderProposal"
 import { Payment } from "./Payment"
 
 export class PaidOrder {

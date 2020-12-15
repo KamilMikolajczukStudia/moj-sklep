@@ -1,20 +1,23 @@
-import { IUserDao } from "../daos"
 import { IUserDto } from "../dtos"
 
-export class User {
-  id: number
-  login: string
-  password: string
+export enum ERoles { normal, biznes, manager, admin }
 
-  constructor(user: IUserDao) {
-    this.id = user.userId
-    this.login = user.login
-    this.password = user.password
+export class User {
+  readonly id: number
+  readonly login: string
+  readonly password: string
+  readonly role: ERoles
+
+  constructor(id: number, login: string, password: string, role: ERoles) {
+    this.id = id
+    this.login = login
+    this.password = password
+    this.role = role
   }
 
-  public dto() {
+  public dto(): IUserDto {
     const { password, ...rest } = this
 
-    return rest as IUserDto
+    return rest
   }
 }

@@ -1,5 +1,3 @@
-import { IProductDto } from '../Imports'
-
 export class Variant {
   constructor(public readonly name: string, public readonly quantity: number) {
   }
@@ -20,7 +18,7 @@ export class ProductData {
   readonly price: number
   readonly variants: Variant[]
 
-  constructor(private readonly _product: IProductDto) {
+  constructor(private readonly _product: any) {
     this.id = _product.id
     this.name = _product.name
     this.nameLower = _product.name.toLowerCase()
@@ -29,6 +27,6 @@ export class ProductData {
     this.unit = _product.unit
     this.img = _product.img
     this.price = _product.price
-    this.variants = _product.variants.map(v => new Variant(v.name, v.quantity))
+    this.variants = _product.variants.map((v: any) => new Variant(v.name, v.quantity))
   }
 }

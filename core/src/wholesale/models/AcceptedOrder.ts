@@ -1,5 +1,5 @@
-import { User } from "authentication/models"
-import { OrderProposal } from "./Order"
+import { User } from "../../authentication/models"
+import { OrderProposal } from "./OrderProposal"
 
 export class AcceptedOrder {
   constructor(
